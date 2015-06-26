@@ -59,7 +59,7 @@ startRender = (function() {
     });
 });
 var createLocalFiles = (function() {
-    console.log("****** " + counter + " *****");
+    console.log("****** File write begins *****");
 
     if (1) {
         if (page.injectJs('jquery.js')) {
