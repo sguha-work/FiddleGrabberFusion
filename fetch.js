@@ -59,7 +59,7 @@ startRender = (function() {
     });
 });
 var createLocalFiles = (function() {
-    console.log("****** File write begins *****");
+    console.log("****** " + counter + " *****");
 
     if (1) {
         if (page.injectJs('jquery.js')) {
@@ -116,38 +116,44 @@ var createLocalFiles = (function() {
                     var folderName = rootDirectoryName + "/" + rootFolderName + "/" + name;
                     folderName += "_" + counter;
                     fs.makeDirectory(folderName);
-                    var jsData = value.js.split("new FusionCharts(")[1].split(".render()")[0].trim();
-                    jsData = jsData.substring(0, (jsData.length - 1)).split("'").join('\"');
-                    var newString = "";
-                    for (var index = 0; index < jsData.length; index++) {
-                        if (jsData[index] == ":" && jsData[index - 1] != '"') {
-                            newString += '"' + jsData[index];
-                            var tempString = "";
-                            var index2 = index;
-                            while (newString[index2] != " ") {
-                                index2 -= 1;
+
+                                        
+                    var fcCode,
+                        data,
+                        FusionCharts = {
+                            ready: function(fn) {
+                                fcCode = fn;
+                                return fn;
                             }
-                            for (var index3 = 0; index3 < newString.length; index3++) {
-                                if (index3 == index2 + 1) {
-                                    tempString += '"' + newString[index3];
-                                } else {
-                                    tempString += newString[index3];
+                        },
+                        getData = function (obj) {
+                            data = obj;
+                            return {
+                                render: function () {
+
                                 }
                             }
-                            newString = tempString;
-                        } else {
-                            newString += jsData[index];
-                        }
-                    }
-                    fs.write(folderName + "/" + "data.json", "{\"" + name + "\":{\"options\": " + newString + "}\r\n}", 'w');
+                         };
+                    
+
+                    value.js = value.js.replace(/new FusionCharts/ig, "getData");
+                    eval(value.js);
+                    eval("(" + fcCode + ")()");
+                    var mainObject = {};
+                    mainObject[name] = {};
+                    mainObject[name]["options"] = data;
+                    fs.write(folderName + "/" + "data.js", JSON.stringify(mainObject, null, 4), 'w');
+                    
                     fs.write(folderName + "/" + "url.txt", url[counter].fiddle_url, 'w');
-                    var grabStatus = ((newString.length)?1:0);
+                    var grabStatus = ((JSON.stringify(data).length)?1:0);
                     var newFiddleObject = {
                         fiddle_id: counter,
                         fiddle_link: url[counter].fiddle_url,
                         fiddle_grab_status: grabStatus
                     };
                     newFiddleObjects.push(newFiddleObject);
+
+
                 }
             }
             console.log("****file write done****");
@@ -160,4 +166,4 @@ var createLocalFiles = (function() {
 
 setInterval(function() {
     startRender();
-}, 30000);
+}, 15000);
