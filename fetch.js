@@ -142,7 +142,9 @@ var createLocalFiles = (function() {
                     var mainObject = {};
                     mainObject[name] = {};
                     mainObject[name]["options"] = data;
-                    fs.write(folderName + "/" + "data.js", JSON.stringify(mainObject, null, 4), 'w');
+                    mainObject[name]["options"]["id"] = name;
+                    mainObject[name]["options"]["refimage"] = "./tests/smoke/fiddles/"+name+"/ref-images/"+name+"-example-1-snapshot.png";
+                    fs.write(folderName + "/" + "data.json", JSON.stringify(mainObject, null, 4), 'w');
                     
                     fs.write(folderName + "/" + "url.txt", url[counter].fiddle_url, 'w');
                     var grabStatus = ((JSON.stringify(data).length)?1:0);
