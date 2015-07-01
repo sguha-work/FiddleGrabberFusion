@@ -18,6 +18,10 @@ for(var index in sourceDirectoryNameArray) {
 	    			var jsonFilePath = path+list[index2]+"/"+childDirectoryLists[index3]+"/"+"data.json";
 	    			if(fs.isFile(jsonFilePath)) {
 	    				var fileData = JSON.parse(fs.read(jsonFilePath));
+	    				//fileData[childDirectoryLists[index3].split("_")[0]]["options"]["dataSource"]["chart"].animation = 0;
+	    				if(typeof fileData[childDirectoryLists[index3].split("_")[0]]["options"]["dataSource"]["chart"] != "undefined") {
+	    					fileData[childDirectoryLists[index3].split("_")[0]]["options"]["dataSource"]["chart"]["animation"] = "0";
+	    				}
 	    				data[list[index2].toLowerCase()+"-"+childDirectoryLists[index3].split("_")[0].toLowerCase()] = fileData[childDirectoryLists[index3].split("_")[0]];
 	    			}	
 	    		}
